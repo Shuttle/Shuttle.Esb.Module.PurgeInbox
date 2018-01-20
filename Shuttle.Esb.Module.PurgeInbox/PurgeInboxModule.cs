@@ -1,5 +1,6 @@
 ﻿using System;
-using Shuttle.Core.Infrastructure;
+using Shuttle.Core.Contract;
+using Shuttle.Core.Pipelines;
 
 namespace Shuttle.Esb.Module.PurgeInbox
 {
@@ -10,8 +11,8 @@ namespace Shuttle.Esb.Module.PurgeInbox
 
         public PurgeInboxModule(IPipelineFactory pipelineFactory, PurgeInboxObserver purgeInboxObserver)
         {
-            Guard.AgainstNull(pipelineFactory, "pipelineFactory");
-            Guard.AgainstNull(purgeInboxObserver, "purgeInboxObserver");
+            Guard.AgainstNull(pipelineFactory, nameof(pipelineFactory));
+            Guard.AgainstNull(purgeInboxObserver, nameof(purgeInboxObserver));
 
             _purgeInboxObserver = purgeInboxObserver;
 
@@ -20,7 +21,8 @@ namespace Shuttle.Esb.Module.PurgeInbox
 
         private void PipelineCreated(object sender, PipelineEventArgs e)
         {
-            if (!e.Pipeline.GetType().FullName.Equals(_startupPipelineName, StringComparison.InvariantCultureIgnoreCase))
+            if (!(e.Pipeline.GetType().FullName??string.Empty)
+                .Equals(_startupPipelineName, StringComparison.InvariantCultureIgnoreCase))
             {
                 return;
             }
