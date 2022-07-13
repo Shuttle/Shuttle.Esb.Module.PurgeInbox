@@ -6,10 +6,15 @@ PM> Install-Package Shuttle.Esb.Module.PurgeInbox
 
 The PurgeInbox module for Shuttle.Esb clears the inbox work queue upon startup.
 
-The module will attach the `PurgeInboxObserver` to the `OnAfterInitializeQueueFactories` event of the `StartupPipeline` and purges the inbox work queue if the relevant queue implementation has implemented the `IPurgeQueue` interface.  If the inbox work queue implementation has *not* implemented the `IPurgeQueue` interface only a warning is logged.
+The module will attach the `PurgeInboxObserver` to the `OnAfterConfigureQueues` event of the `StartupPipeline` and purges the inbox work queue if the relevant queue implementation has implemented the `IPurgeQueue` interface.  If the inbox work queue implementation has *not* implemented the `IPurgeQueue` interface the purge is ignored.
 
-## Registration / Activation
+## Configuration
 
-The required components may be registered by calling `ComponentRegistryExtensions.RegisterPurgeInbox(IComponentRegistry)`.
+The module may be added using the following `ServiceBusBuilder` extension method:
 
-In order for the module to attach to the `IPipelineFactory` you would need to resolve it using `IComponentResolver.Resolve<PurgeInboxModule>()`.
+```
+services.AddServiceBus(builder => 
+{
+	builder.AddPurgeInboxModule();
+});
+```
