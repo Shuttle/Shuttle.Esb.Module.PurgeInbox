@@ -3,7 +3,7 @@ using Shuttle.Core.Pipelines;
 
 namespace Shuttle.Esb.Module.PurgeInbox
 {
-    public class PurgeInboxObserver : IPipelineObserver<OnAfterConfigureQueues>
+    public class PurgeInboxObserver : IPipelineObserver<OnAfterConfigure>
     {
         private readonly IServiceBusConfiguration _configuration;
 
@@ -14,16 +14,9 @@ namespace Shuttle.Esb.Module.PurgeInbox
             _configuration = configuration;
         }
 
-        public void Execute(OnAfterConfigureQueues pipelineEvent)
+        public void Execute(OnAfterConfigure pipelineEvent)
         {
-            var purge = _configuration.Inbox.WorkQueue as IPurgeQueue;
-
-            if (purge == null)
-            {
-                return;
-            }
-
-            purge.Purge();
+            (_configuration.Inbox.WorkQueue as IPurgeQueue)?.Purge(); ;
         }
     }
 }
