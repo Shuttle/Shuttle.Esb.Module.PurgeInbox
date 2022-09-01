@@ -7,7 +7,7 @@ namespace Shuttle.Esb.Module.PurgeInbox
     public class PurgeInboxModule
     {
         private readonly PurgeInboxObserver _purgeInboxObserver;
-        private readonly string _startupPipelineName = typeof (StartupPipeline).FullName;
+        private readonly Type _startupPipelineType = typeof (StartupPipeline);
 
         public PurgeInboxModule(IPipelineFactory pipelineFactory, PurgeInboxObserver purgeInboxObserver)
         {
@@ -21,8 +21,7 @@ namespace Shuttle.Esb.Module.PurgeInbox
 
         private void PipelineCreated(object sender, PipelineEventArgs e)
         {
-            if (!(e.Pipeline.GetType().FullName??string.Empty)
-                .Equals(_startupPipelineName, StringComparison.InvariantCultureIgnoreCase))
+            if (e.Pipeline.GetType() != _startupPipelineType)
             {
                 return;
             }
